@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 
 namespace Arlo.Models
@@ -29,7 +30,7 @@ namespace Arlo.Models
         public string DeviceName { get; set; }
 
         [JsonPropertyName("lastModified")]
-        public DateTime LastModified { get; set; }
+        public long LastModified { get; set; }
 
         [JsonPropertyName("xCloudId")]
         public string XCloudId { get; set; }
@@ -53,7 +54,7 @@ namespace Arlo.Models
         public bool CvrEnabled { get; set; }
 
         [JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get; set; }
+        public long DateCreated { get; set; }
 
         [JsonPropertyName("owner")]
         public DeviceOwner Owner { get; set; }

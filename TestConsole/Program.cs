@@ -1,4 +1,5 @@
 ﻿using System;
+using Arlo;
 
 namespace TestConsole
 {
@@ -6,12 +7,16 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            var arlo = new Arlo.Arlo();
             Arlo.Arlo.Email = "";
             Arlo.Arlo.Password = "";
+            var arlo = new ArloClient();
             arlo.Authenticate().ContinueWith(t =>
             {
-
+                if (t.IsFaulted == false)
+                {
+                    var devices = arlo.GetDevicesAsync();
+                    var media = arlo.GetLibraryAsync();
+                }
             });
 
             Console.ReadKey();

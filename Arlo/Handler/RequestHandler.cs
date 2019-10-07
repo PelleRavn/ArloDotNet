@@ -23,7 +23,14 @@ namespace Arlo.Handler
             }
             set
             {
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("", value);
+                try
+                {
+                    _httpClient.DefaultRequestHeaders.Add("Authorization", value);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
             }
         }
 
