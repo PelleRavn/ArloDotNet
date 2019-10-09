@@ -74,22 +74,32 @@ namespace Arlo.Handler
                 }
 
                 var response = await _httpClient.SendAsync(request);
-
-                if (response.IsSuccessStatusCode)
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
                 {
-                    using (var responseStream = await response.Content.ReadAsStreamAsync())
+                    if (response.IsSuccessStatusCode == true)
                     {
                         var obj = await JsonSerializer.DeserializeAsync<Result<T>>(responseStream);
+                        if (obj != null)
+                        {
+                            obj.StatusCode = response.StatusCode;
+                        }
                         return obj;
                     }
-                }
-                else
-                {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    System.Diagnostics.Debug.WriteLine(responseString);
+                    else
+                    {
+                        var obj = new Result<T>();
 
-                    var errorObject = JsonSerializer.Deserialize<Result<ErrorData>>(responseString);
+                        var errorDataResult = await JsonSerializer.DeserializeAsync<Result<ErrorData>>(responseStream);
+                        if (errorDataResult != null)
+                        {
+                            obj.StatusCode = response.StatusCode;
+                            obj.ErrorData = errorDataResult.Data;
+                            obj.Success = false;
+                        }
 
+                        return obj;
+
+                    }
                 }
             }
             catch (Exception ex)

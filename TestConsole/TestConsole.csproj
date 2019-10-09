@@ -8,4 +8,18 @@
   <ItemGroup>
     <ProjectReference Include="..\Arlo\Arlo.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
 </Project>

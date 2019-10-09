@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Arlo.Handler;
 using Arlo.Models;
@@ -8,46 +9,51 @@ namespace Arlo
 {
     public class ArloClient
     {
-        public static string Email { get; set; }
-        public static string Password { get; set; }
-
         private RequestHandler _requestHandler;
 
-        public ArloClient()
+        public ArloClient(string authenticationToken)
         {
-            _requestHandler = new RequestHandler();
-        }
-
-        public async Task Authenticate()
-        {
-            var loginRequest = new LoginRequest(Email, Password);
-            var result = await _requestHandler.PostAsync<LoginData>("hmsweb/login/v2", loginRequest);
-            if (result != null && result.Success == true)
+            if (string.IsNullOrEmpty(authenticationToken) == true)
             {
-                _requestHandler.Authorization = result.Data.Token;
+                throw new ArgumentException("Invalid authentication token passed to constructor");
             }
+
+            _requestHandler = new RequestHandler();
+            _requestHandler.Authorization = authenticationToken;
         }
 
-        public async Task<List<Device>> GetDevicesAsync()
+        public ArloClient(Result<LoginData> loginResult) : this(loginResult?.Data?.Token)
+        {
+
+        }
+
+        public ArloClient(LoginData loginData) : this(loginData?.Token)
+        {
+
+        }
+
+        public static async Task<Result<LoginData>> AuthenticateAsync(string email, string password)
+        {
+            var loginRequest = new LoginRequest(email, password);
+            var requestHandler = new RequestHandler();
+            var result = await requestHandler.PostAsync<LoginData>("hmsweb/login/v2", loginRequest);
+
+            return result;
+        }
+
+        public async Task<Result<List<Device>>> GetDevicesAsync()
         {
             var result = await _requestHandler.GetAsync<List<Device>>("hmsweb/users/devices");
-            if (result != null && result.Success == true)
-            {
-                return result.Data;
-            }
 
-            return null;
+            return result;
         }
 
-        public async Task<List<Media>> GetLibraryAsync()
+        public async Task<Result<List<Media>>> GetLibraryAsync(DateTime dateFrom, DateTime dateTo)
         {
-            var result = await _requestHandler.PostAsync<List<Media>>("hmsweb/users/library");
-            if (result != null && result.Success == true)
-            {
-                return result.Data;
-            }
+            var mediaRequest = new MediaLibraryRequest(dateFrom, dateTo);
+            var result = await _requestHandler.PostAsync<List<Media>>("hmsweb/users/library", mediaRequest);
 
-            return null;
+            return result;
         }
     }
 }

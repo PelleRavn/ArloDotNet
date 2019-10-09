@@ -20,7 +20,7 @@ namespace Arlo.Models
         public string DeviceId { get; set; }
 
         [JsonPropertyName("createdDate")]
-        public DateTime CreatedDate { get; set; }
+        public string CreatedDate { get; set; }
 
         [JsonPropertyName("currentState")]
         public string CurrentState { get; set; }
@@ -38,10 +38,10 @@ namespace Arlo.Models
         public string CreatedBy { get; set; }
 
         [JsonPropertyName("lastModified")]
-        public DateTime LastModified { get; set; }
+        public long LastModified { get; set; }
 
         [JsonPropertyName("localCreatedDate")]
-        public DateTime LocalCreatedDate { get; set; }
+        public long LocalCreatedDate { get; set; }
 
         [JsonPropertyName("presignedContentUrl")]
         public string PresignedContentUrl { get; set; }
@@ -50,7 +50,7 @@ namespace Arlo.Models
         public string PresignedThumbnailUrl { get; set; }
 
         [JsonPropertyName("utcCreatedDate")]
-        public DateTime UtcCreatedDate { get; set; }
+        public long UtcCreatedDate { get; set; }
 
         [JsonPropertyName("timeZone")]
         public string TimeZone { get; set; }

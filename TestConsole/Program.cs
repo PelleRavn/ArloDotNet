@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Arlo;
 
 namespace TestConsole
@@ -7,15 +8,12 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            Arlo.Arlo.Email = "";
-            Arlo.Arlo.Password = "";
-            var arlo = new ArloClient();
-            arlo.Authenticate().ContinueWith(t =>
+            var application = new TestApplication();
+            application.Run().ContinueWith(t =>
             {
-                if (t.IsFaulted == false)
+                if (t.IsFaulted == true)
                 {
-                    var devices = arlo.GetDevicesAsync();
-                    var media = arlo.GetLibraryAsync();
+                    System.Diagnostics.Debug.WriteLine(t.Exception);
                 }
             });
 
