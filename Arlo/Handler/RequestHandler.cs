@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,22 +35,22 @@ namespace Arlo.Handler
             }
         }
 
-        public async Task<Result<T>> GetAsync<T>(string uri)
+        public async Task<Result<T>> GetAsync<T>(string uri, Dictionary<string, string> extraHeaders = null)
         {
-            return await MakeRequestAsync<T>(HttpMethod.Get, uri, null);
+            return await MakeRequestAsync<T>(HttpMethod.Get, uri, null, extraHeaders);
         }
 
-        public async Task<Result<T>> PostAsync<T>(string uri, object parameter = null)
+        public async Task<Result<T>> PostAsync<T>(string uri, object parameter = null, Dictionary<string, string> extraHeaders = null)
         {
-            return await MakeRequestAsync<T>(HttpMethod.Post, uri, parameter);
+            return await MakeRequestAsync<T>(HttpMethod.Post, uri, parameter, extraHeaders);
         }
 
-        public async Task<Result<T>> PutAsync<T>(string uri, object parameter = null)
+        public async Task<Result<T>> PutAsync<T>(string uri, object parameter = null, Dictionary<string, string> extraHeaders = null)
         {
-            return await MakeRequestAsync<T>(HttpMethod.Put, uri, parameter);
+            return await MakeRequestAsync<T>(HttpMethod.Put, uri, parameter, extraHeaders);
         }
 
-        private async Task<Result<T>> MakeRequestAsync<T>(HttpMethod httpMethod, string uri, object parameter)
+        private async Task<Result<T>> MakeRequestAsync<T>(HttpMethod httpMethod, string uri, object parameter, Dictionary<string, string> extraHeaders = null)
         {
             try
             {
@@ -57,6 +58,14 @@ namespace Arlo.Handler
 
                 request.Headers.Add("Accept", "application/json");
                 request.Headers.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36");
+
+                if (extraHeaders != null)
+                {
+                    foreach (var header in extraHeaders)
+                    {
+                        request.Headers.Add(header.Key, header.Value);
+                    }
+                }
 
                 switch (httpMethod.Method)
                 {

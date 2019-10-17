@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Arlo;
@@ -17,8 +18,7 @@ namespace TestConsole
         {
             var config = GetConfig();
 
-            var loginToken = config?.Token;
-            if (string.IsNullOrEmpty(loginToken) == true)
+            if (string.IsNullOrEmpty(config?.Token) == true)
             {
                 Console.WriteLine("Logging in...");
                 var loginResult = await ArloClient.AuthenticateAsync(config.Email, config.Password);
@@ -26,9 +26,10 @@ namespace TestConsole
                 if (loginResult.Success)
                 {
                     Console.WriteLine("Login successful");
-                    loginToken = loginResult.Data.Token;
 
-                    config.Token = loginToken;
+                    config.UserId = loginResult.Data.UserId;
+                    config.Token = loginResult.Data.Token;
+
                     SaveConfig(config);
                 }
                 else
@@ -37,12 +38,22 @@ namespace TestConsole
                 }
             }
 
-            var arlo = new ArloClient(loginToken);
+            var arlo = new ArloClient(config?.Token, config?.UserId);
 
             var devices = await arlo.GetDevicesAsync();
             if (devices.Success)
             {
                 Console.WriteLine($"Devices: {devices.Data.Count}");
+
+                var firstCamera = devices.Data.FirstOrDefault(f => f.DeviceType.Equals("camera"));
+                var baseStation = devices.Data.FirstOrDefault(f => f.DeviceId.Equals(firstCamera.ParentId));
+
+                var armResult = await arlo.ArmDeviceAsync(baseStation);
+                if (armResult.Success)
+                {
+                    Console.WriteLine($"Did arm device: {baseStation.DeviceName} ({baseStation.DeviceId})");
+
+                }
             }
             else
             {

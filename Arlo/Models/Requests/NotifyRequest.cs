@@ -11,7 +11,7 @@ namespace Arlo.Models.Requests
 
     public class NotifyRequest
     {
-        public NotifyRequest(Device device, string from, Mode mode)
+        public NotifyRequest(Device device, string from, Mode mode) : this()
         {
             To = device.DeviceId;
             From = from;
@@ -20,7 +20,7 @@ namespace Arlo.Models.Requests
 
         public NotifyRequest()
         {
-
+            TransId = $"web!{Guid.NewGuid().ToString().Replace("-", "")}!{DateTime.Now.Ticks}";
         }
 
         public class NotifyProperties

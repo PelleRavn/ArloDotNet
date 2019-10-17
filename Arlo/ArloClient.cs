@@ -10,8 +10,9 @@ namespace Arlo
     public class ArloClient
     {
         private RequestHandler _requestHandler;
+        private string _userId;
 
-        public ArloClient(string authenticationToken)
+        public ArloClient(string authenticationToken, string userId = null)
         {
             if (string.IsNullOrEmpty(authenticationToken) == true)
             {
@@ -20,14 +21,15 @@ namespace Arlo
 
             _requestHandler = new RequestHandler();
             _requestHandler.Authorization = authenticationToken;
+            _userId = userId;
         }
 
-        public ArloClient(Result<LoginData> loginResult) : this(loginResult?.Data?.Token)
+        public ArloClient(Result<LoginData> loginResult) : this(loginResult?.Data?.Token, loginResult?.Data?.UserId)
         {
 
         }
 
-        public ArloClient(LoginData loginData) : this(loginData?.Token)
+        public ArloClient(LoginData loginData) : this(loginData?.Token, loginData.UserId)
         {
 
         }
@@ -48,9 +50,14 @@ namespace Arlo
             return result;
         }
 
-        public async Task<Result<List<Media>>> ArmDeviceAsync(Device device)
+        public async Task<Result<object>> ArmDeviceAsync(Device device)
         {
-            var notifyRequest = new NotifyRequest(device, "USER_ID_web", Mode.Arm);
+            if (string.IsNullOrEmpty(_userId))
+            {
+                throw new NullReferenceException("You did not provide a UserId to the ArloClient constructor, so arming a device is not possible.");
+            }
+
+            var notifyRequest = new NotifyRequest(device, $"{_userId}_web", Mode.Arm);
             //        {
             //            "from":    "3AB3-210-6687469_web",
             //"to":    "48E46573A0B8B",
@@ -62,14 +69,23 @@ namespace Arlo
             //                "active":    "mode1"
             //}
             //        }
-            var result = await _requestHandler.PostAsync<List<Media>>("hmsweb/users/library", notifyRequest);
+
+            var headers = new Dictionary<string, string>();
+            headers.Add("xcloudId", device.XCloudId);
+
+            var result = await _requestHandler.PostAsync<object>($"hmsweb/users/devices/notify/{device.DeviceId}", notifyRequest, headers);
 
             return result;
         }
 
-        public async Task<Result<List<Media>>> DisarmDeviceAsync(Device device)
+        public async Task<Result<object>> DisarmDeviceAsync(Device device)
         {
-            var notifyRequest = new NotifyRequest(device, "USER_ID_web", Mode.Disarm);
+            if (string.IsNullOrEmpty(_userId))
+            {
+                throw new NullReferenceException("You did not provide a UserId to the ArloClient constructor, so disarming a device is not possible.");
+            }
+
+            var notifyRequest = new NotifyRequest(device, $"{_userId}_web", Mode.Disarm);
             //        {
             //            "from":    "3AB3-210-6687469_web",
             //"to":    "48E46573A0B8B",
@@ -81,7 +97,11 @@ namespace Arlo
             //                "active":    "mode0"
             //}
             //        }
-            var result = await _requestHandler.PostAsync<List<Media>>("hmsweb/users/library", notifyRequest);
+
+            var headers = new Dictionary<string, string>();
+            headers.Add("xcloudId", device.XCloudId);
+
+            var result = await _requestHandler.PostAsync<object>($"hmsweb/users/devices/notify/{device.DeviceId}", notifyRequest, headers);
 
             return result;
         }
