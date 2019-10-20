@@ -20,7 +20,7 @@ namespace Arlo.Models
         public string DeviceId { get; set; }
 
         [JsonPropertyName("createdDate")]
-        public string CreatedDate { get; set; }
+        public long CreatedDate { get; set; }
 
         [JsonPropertyName("currentState")]
         public string CurrentState { get; set; }
@@ -44,10 +44,10 @@ namespace Arlo.Models
         public long LocalCreatedDate { get; set; }
 
         [JsonPropertyName("presignedContentUrl")]
-        public string PresignedContentUrl { get; set; }
+        public Uri PresignedContentUrl { get; set; }
 
         [JsonPropertyName("presignedThumbnailUrl")]
-        public string PresignedThumbnailUrl { get; set; }
+        public Uri PresignedThumbnailUrl { get; set; }
 
         [JsonPropertyName("utcCreatedDate")]
         public long UtcCreatedDate { get; set; }
@@ -56,10 +56,16 @@ namespace Arlo.Models
         public string TimeZone { get; set; }
 
         [JsonPropertyName("mediaDuration")]
-        public string MediaDuration { get; set; }
+        public DateTimeOffset MediaDuration { get; set; }
 
         [JsonPropertyName("mediaDurationSecond")]
-        public int MediaDurationSecond { get; set; }
+        public long MediaDurationSecond { get; set; }
+
+        [JsonPropertyName("objCategory")]
+        public string ObjCategory { get; set; }
+
+        [JsonPropertyName("objRegion")]
+        public string ObjRegion { get; set; }
 
         [JsonPropertyName("donated")]
         public bool Donated { get; set; }
