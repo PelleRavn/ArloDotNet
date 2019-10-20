@@ -106,6 +106,30 @@ namespace Arlo
             return result;
         }
 
+        public async Task<Result<List<object>>> GetSmartAlertsAsync(Device camera)
+        {
+            if (camera.DeviceType.Equals("camera") == false)
+            {
+                throw new ArgumentException("Trying to get Smart Alerts for a camera, but the device is not the type 'camera'.");
+            }
+
+            var result = await _requestHandler.GetAsync<List<object>>($"hmsweb/usersdevices/{camera.UniqueId}/smartalerts");
+
+            return result;
+        }
+
+        public async Task<Result<List<object>>> GetAutomationActivityZonesAsync(Device camera)
+        {
+            if (camera.DeviceType.Equals("camera") == false)
+            {
+                throw new ArgumentException("Trying to get Automation Activity Zones for a camera, but the device is not the type 'camera'.");
+            }
+
+            var result = await _requestHandler.GetAsync<List<object>>($"hmsweb/usersdevices/{camera.UniqueId}/activityzones");
+
+            return result;
+        }
+
         public async Task<Result<List<Media>>> GetLibraryAsync(DateTime dateFrom, DateTime dateTo)
         {
             var mediaRequest = new MediaLibraryRequest(dateFrom, dateTo);
@@ -121,44 +145,72 @@ namespace Arlo
             return result;
         }
 
-        public async Task<Result<List<object>>> GetProfileAsync()
+        public async Task<Result<Profile>> GetProfileAsync()
         {
-            var result = await _requestHandler.GetAsync<List<object>>("hmsweb/users/profile");
+            var result = await _requestHandler.GetAsync<Profile>("hmsweb/users/profile");
 
             return result;
         }
 
-        public async Task<Result<object>> GetSessionAsync()
+        public async Task<Result<Session>> GetSessionAsync()
         {
-            var result = await _requestHandler.GetAsync<object>("hmsweb/users/session");
+            var result = await _requestHandler.GetAsync<Session>("hmsweb/users/session");
 
             return result;
         }
 
-        public async Task<Result<List<object>>> GetFriendsAsync()
+        public async Task<Result<List<Friend>>> GetFriendsAsync()
         {
-            var result = await _requestHandler.GetAsync<List<object>>("hmsweb/users/friends");
+            var result = await _requestHandler.GetAsync<List<Friend>>("hmsweb/users/friends");
 
             return result;
         }
 
-        public async Task<Result<List<object>>> GetUserLocationsAsync()
+        public async Task<Result<List<UserLocation>>> GetUserLocationsAsync()
         {
-            var result = await _requestHandler.GetAsync<List<object>>("hmsweb/users/locations");
+            var result = await _requestHandler.GetAsync<List<UserLocation>>("hmsweb/users/locations");
 
             return result;
         }
 
-        public async Task<Result<List<object>>> GetServiceLevelAsync()
+        public async Task<Result<List<ServiceLevel>>> GetServiceLevelAsync()
         {
-            var result = await _requestHandler.GetAsync<List<object>>("hmsweb/users/serviceLevel/v2");
+            var result = await _requestHandler.GetAsync<List<ServiceLevel>>("hmsweb/users/serviceLevel/v2");
 
             return result;
         }
 
-        public async Task<Result<List<object>>> GetPaymentOffersAsync()
+        public async Task<Result<List<PaymentOffer>>> GetPaymentOffersAsync()
         {
-            var result = await _requestHandler.GetAsync<List<object>>("hmsweb/users/payment/offers");
+            var result = await _requestHandler.GetAsync<List<PaymentOffer>>("hmsweb/users/payment/offers");
+
+            return result;
+        }
+
+        public async Task<Result<SmartFeaturesResult>> GetSmartFeaturesAsync()
+        {
+            var result = await _requestHandler.GetAsync<SmartFeaturesResult>("hmsweb/users/subscription/smart/features");
+
+            return result;
+        }
+
+        public async Task<Result<object>> GetAutomationDefinitionsAsync()
+        {
+            var result = await _requestHandler.GetAsync<object>("hmsweb/users/automation/definitions");
+
+            return result;
+        }
+
+        public async Task<Result<List<object>>> GetModesAsync()
+        {
+            var result = await _requestHandler.GetAsync<List<object>>("hmsweb/users/devices/automation/active");
+
+            return result;
+        }
+
+        public async Task<Result<DeviceSupport>> GetDeviceSupportAsync()
+        {
+            var result = await _requestHandler.GetAsync<DeviceSupport>("hmsweb/devicesupport/v3");
 
             return result;
         }
